@@ -1,21 +1,36 @@
 <script setup lang="ts">
-defineProps(['title', 'description'])
+
+type Todo = {
+  taskId: number
+  title: string
+  description: string
+  completed: boolean
+}
+
+type Props = {
+  todo: Todo,
+  onChecked: Function,
+  onEdit: Function
+}
+
+const props = defineProps<Props>()
+
 </script>
 
 <template>
   <div class="w-100 bg-body-tertiary rounded p-2 todo-item">
     <div class="action-container column-gap-1">
-      <button class="hiding action-button">
+      <button class="hiding action-button" @click="() => props.onChecked(props.todo)">
         <img src="src/assets/check-solid.svg" class="action-image" width="15" height="15" />
       </button>
-      <button class="hiding action-button">
+      <button class="hiding action-button" @click="() => props.onEdit(props.todo)">
         <img src="src/assets/pen-solid.svg" class="action-image" width="15" height="15" />
       </button>
     </div>
     <div class="vertical-line" />
     <div>
-      <h3>{{ title }}</h3>
-      <p class="text-break" v-if="description != null">{{ description }}</p>
+      <h3>{{ props.todo.title }}</h3>
+      <p class="text-break" v-if="props.todo.description != null && props.todo.description != ''">{{ props.todo.description }}</p>
       <p class="text-break" v-else>No Description</p>
     </div>
   </div>
