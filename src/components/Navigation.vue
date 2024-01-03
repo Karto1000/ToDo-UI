@@ -1,4 +1,9 @@
-<script setup lang="ts"></script>
+<script setup lang="ts">
+
+const logout = () => {
+  localStorage.removeItem('jwt')
+}
+</script>
 
 <template>
   <nav class="navbar navbar-expand-sm bg-body-tertiary">
@@ -22,6 +27,11 @@
         <ul class="navbar-nav me-auto mb-lg-0">
           <li class="nav-item">
             <a class="nav-link active" aria-current="page" href="">Home</a>
+          </li>
+        </ul>
+        <ul class="navbar-nav me-auto mb-lg-0">
+          <li class="nav-item">
+            <a class="nav-link active" aria-current="page" @click="logout" href="/login">Logout</a>
           </li>
         </ul>
       </div>

@@ -1,7 +1,6 @@
 <script setup lang="ts">
 import { RouterView } from 'vue-router'
-//@ts-ignore
-import Navigation from '@/components/Navigation.vue'
+
 </script>
 
 <template>
@@ -9,8 +8,6 @@ import Navigation from '@/components/Navigation.vue'
     <header>
       <div class="wrapper"></div>
     </header>
-
-    <Navigation />
 
     <main>
       <RouterView />

@@ -2,30 +2,33 @@
 import TodoItem from '@/components/TodoItem.vue'
 import { onMounted, ref } from 'vue'
 import { Modal } from 'bootstrap'
-
-type Todo = {
-  taskId: number
-  title: string
-  description: string
-  completed: boolean
-}
+import Navigation from '@/components/Navigation.vue'
+import { addTodo, checkTodoById, getPendingTodos, type Todo, updateTodo } from '@/lib/todo'
+import { useToast } from 'vue-toast-notification'
 
 const todos = ref<Array<Todo>>([])
 const editingTodo = ref<Todo | null>(null)
 const modalObject = ref<Modal | null>(null)
 const modalRef = ref<HTMLElement | null>(null)
+const $toast = useToast()
 
 onMounted(async () => {
-  const result = await fetch('http://localhost:8080/get/pending')
-  todos.value = await result.json()
+  try {
+    todos.value = await getPendingTodos()
+  } catch (e) {
+    $toast.info('Failed to load Todos');
+    return
+  }
 })
 
 const onChecked = async (todo: Todo) => {
-  const response = await fetch(`http://localhost:8080/check/${todo.taskId}`, {
-    method: 'PUT'
-  })
+  if (!todo.taskId) return
 
-  todos.value = await response.json()
+  try {
+    todos.value = await checkTodoById(todo.taskId.toString())
+  } catch (e) {
+    $toast.error((<Error>e).message)
+  }
 }
 
 const onEdit = (todo: Todo) => {
@@ -54,23 +57,31 @@ const onModalSave = async (e: Event) => {
 
   const data = new FormData(e.target as HTMLFormElement)
 
-  const body: { [index: string]: String | number | boolean } = {}
-  data.forEach((v, k) => body[k] = <String>v)
+  const entries: string[] = []
+  data.forEach((v) => entries.push(v.toString()))
 
-  if (editingTodo.value != null) {
-    body.taskId = editingTodo.value.taskId
-    body.completed = editingTodo.value.completed
+  // Any Entry is not truthy
+  if (entries.some(e => !e)) {
+    $toast.info('Invalid Todo')
+    return
+  }
+  const todo: Todo = {
+    title: <string>data.get('title'),
+    description: <string>data.get('description'),
+    completed: false
   }
 
-  const response = await fetch('http://localhost:8080/update', {
-    method: 'PUT',
-    body: JSON.stringify(body),
-    headers: {
-      'Content-Type': 'application/json'
-    }
-  })
+  if (editingTodo.value != null) {
+    todo.taskId = editingTodo.value.taskId
+    todo.completed = editingTodo.value.completed
+  }
 
-  todos.value = await response.json()
+  try {
+    todos.value = await updateTodo(todo)
+  } catch (e) {
+    $toast.error((<Error>e).message)
+    return
+  }
 
   modalObject.value.hide()
   modalObject.value = null
@@ -81,23 +92,33 @@ const onSubmit = async (e: Event) => {
 
   const data = new FormData(e.target as HTMLFormElement)
 
-  const body: { [index: string]: String } = {}
-  data.forEach((v, k) => body[k] = <String>v)
+  const entries: string[] = []
+  data.forEach((v) => entries.push(<string>v))
 
-  const response = await fetch('http://localhost:8080/add', {
-    method: 'POST',
-    body: JSON.stringify(body),
-    headers: {
-      'Content-Type': 'application/json'
-    }
-  })
+  // Any Entry is not truthy
+  if (entries.some(e => !e)) {
+    $toast.info('Invalid Todo')
+    return
+  }
 
-  todos.value = await response.json()
+  const todo = {
+    title: <string>data.get('title'),
+    description: <string>data.get('description'),
+    completed: false
+  }
+
+  try {
+    todos.value = await addTodo(todo)
+  } catch (e) {
+    $toast.error((<Error>e).message)
+    return
+  }
 }
 
 </script>
 
 <template>
+  <Navigation />
   <div class="modal fade" id="edit-modal" tabindex="-1" role="dialog" aria-labelledby="edit-modal-label"
        aria-hidden="true" ref="modalRef">
     <div class="modal-dialog" role="document">
