@@ -23,7 +23,4 @@ import { RouterView } from 'vue-router'
 </template>
 
 <style scoped>
-main {
-  padding: 12px;
-}
 </style>

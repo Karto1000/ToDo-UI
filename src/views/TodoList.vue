@@ -16,7 +16,7 @@ onMounted(async () => {
   try {
     todos.value = await getPendingTodos()
   } catch (e) {
-    $toast.info('Failed to load Todos');
+    $toast.info('Failed to load Todos')
     return
   }
 })
@@ -119,52 +119,54 @@ const onSubmit = async (e: Event) => {
 
 <template>
   <Navigation />
-  <div class="modal fade" id="edit-modal" tabindex="-1" role="dialog" aria-labelledby="edit-modal-label"
-       aria-hidden="true" ref="modalRef">
-    <div class="modal-dialog" role="document">
-      <div class="modal-content">
-        <div class="modal-header">
-          <h5 class="modal-title" id="edit-modal-label">Edit Todo "{{ editingTodo?.title }}"</h5>
-        </div>
-        <div class="modal-body">
-          <form id="editing-form" @submit="onModalSave">
-            <div class="mb-3">
-              <label for="input-title" class="form-label">Title</label>
-              <input type="text" name="title" class="form-control" id="input-title" aria-describedby="emailHelp"
-                     :value="editingTodo?.title" />
-            </div>
-            <div class="mb-3">
-              <label for="input-description" class="form-label">Description</label>
-              <textarea class="form-control" name="description" id="input-description" rows="3"
-                        :value="editingTodo?.description"></textarea>
-            </div>
-          </form>
-        </div>
-        <div class="modal-footer">
-          <button type="button" class="btn btn-secondary" @click="onModalClose">Close</button>
-          <button type="submit" form="editing-form" class="btn btn-primary">Save changes</button>
+  <div class="page">
+    <div class="modal fade" id="edit-modal" tabindex="-1" role="dialog" aria-labelledby="edit-modal-label"
+         aria-hidden="true" ref="modalRef">
+      <div class="modal-dialog" role="document">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="edit-modal-label">Edit Todo "{{ editingTodo?.title }}"</h5>
+          </div>
+          <div class="modal-body">
+            <form id="editing-form" @submit="onModalSave">
+              <div class="mb-3">
+                <label for="input-title" class="form-label">Title</label>
+                <input type="text" name="title" class="form-control" id="input-title" aria-describedby="emailHelp"
+                       :value="editingTodo?.title" />
+              </div>
+              <div class="mb-3">
+                <label for="input-description" class="form-label">Description</label>
+                <textarea class="form-control" name="description" id="input-description" rows="3"
+                          :value="editingTodo?.description"></textarea>
+              </div>
+            </form>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" @click="onModalClose">Close</button>
+            <button type="submit" form="editing-form" class="btn btn-primary">Save changes</button>
+          </div>
         </div>
       </div>
     </div>
-  </div>
 
-  <h1>ToDo's</h1>
-  <hr />
-  <form @submit="onSubmit">
-    <div class="mb-3">
-      <label for="input-title" class="form-label">Title</label>
-      <input type="text" name="title" class="form-control" id="input-title" aria-describedby="emailHelp" />
-    </div>
-    <div class="mb-3">
-      <label for="input-description" class="form-label">Description</label>
-      <textarea class="form-control" name="description" id="input-description" rows="3"></textarea>
-    </div>
-    <button type="submit" class="btn btn-primary">Submit</button>
-  </form>
-  <hr />
-  <div class="d-flex flex-column gap-3">
-    <div v-for="todo in todos" :key="todo.taskId">
-      <TodoItem :todo="todo" :on-checked="onChecked" :on-edit="onEdit" />
+    <h1>ToDo's</h1>
+    <hr />
+    <form @submit="onSubmit">
+      <div class="mb-3">
+        <label for="input-title" class="form-label">Title</label>
+        <input type="text" name="title" class="form-control" id="input-title" aria-describedby="emailHelp" />
+      </div>
+      <div class="mb-3">
+        <label for="input-description" class="form-label">Description</label>
+        <textarea class="form-control" name="description" id="input-description" rows="3"></textarea>
+      </div>
+      <button type="submit" class="btn btn-primary">Submit</button>
+    </form>
+    <hr />
+    <div class="d-flex flex-column gap-3">
+      <div v-for="todo in todos" :key="todo.taskId">
+        <TodoItem :todo="todo" :on-checked="onChecked" :on-edit="onEdit" />
+      </div>
     </div>
   </div>
 </template>

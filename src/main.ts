@@ -9,6 +9,8 @@ import 'bootstrap/dist/css/bootstrap.min.css'
 
 const app = createApp(App)
 
+import "@/assets/global.css"
+
 app.use(router)
 app.use(ToastPlugin)
 

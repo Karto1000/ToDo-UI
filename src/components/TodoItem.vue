@@ -18,7 +18,7 @@ const props = defineProps<Props>()
 </script>
 
 <template>
-  <div class="w-100 bg-body-tertiary rounded p-2 todo-item">
+  <div class="w-100 rounded p-2 todo-item">
     <div class="action-container column-gap-1">
       <button class="hiding action-button" @click="() => props.onChecked(props.todo)">
         <img src="src/assets/check-solid.svg" class="action-image" width="15" height="15" />
