@@ -1,6 +1,5 @@
 <script setup lang="ts">
 import { RouterView } from 'vue-router'
-
 </script>
 
 <template>
@@ -13,7 +12,7 @@ import { RouterView } from 'vue-router'
       <RouterView />
     </main>
 
-    <footer class="bg-body-tertiary text-center text-lg-start fixed-bottom">
+    <footer class="bg-body-tertiary text-center text-lg-start">
       <div class="text-center p-3">
         © 2023 Copyright:
         <a class="text-body" href="https://mdbootstrap.com/">ToDos.com</a>
@@ -22,5 +21,4 @@ import { RouterView } from 'vue-router'
   </body>
 </template>
 
-<style scoped>
-</style>
+<style scoped></style>
