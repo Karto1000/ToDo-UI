@@ -11,14 +11,13 @@ export type Todo = {
 }
 
 const getPendingTodos = async (): Promise<Todo[]> => {
-  axios.defaults.headers.common['Authorization'] = `Bearer ${localStorage.getItem('jwt')}`
-
   try {
     const response = await axios.get(`${API_URL}/get/pending`)
     return response.data as Todo[]
   } catch (e) {
     if (e instanceof AxiosError) {
       if (!e.response) throw new Error('Request Failed')
+      if (e.response.status === 403) throw new ResponseError({ message: 'Forbidden', code: 403 })
       throw new ResponseError(e.response.data as ErrorResponse)
     }
 
@@ -27,14 +26,13 @@ const getPendingTodos = async (): Promise<Todo[]> => {
 }
 
 const checkTodoById = async (id: string): Promise<Todo[]> => {
-  axios.defaults.headers.common['Authorization'] = `Bearer ${localStorage.getItem('jwt')}`
-
   try {
     const response = await axios.put(`${API_URL}/check/${id}`)
     return response.data as Todo[]
   } catch (e) {
     if (e instanceof AxiosError) {
       if (!e.response) throw new Error('Request Failed')
+      if (e.response.status === 403) throw new ResponseError({ message: 'Forbidden', code: 403 })
       throw new ResponseError(e.response.data as ErrorResponse)
     }
 
@@ -43,8 +41,6 @@ const checkTodoById = async (id: string): Promise<Todo[]> => {
 }
 
 const updateTodo = async (data: Todo): Promise<Todo[]> => {
-  axios.defaults.headers.common['Authorization'] = `Bearer ${localStorage.getItem('jwt')}`
-
   try {
     const response = await axios.put(`${API_URL}/update`, JSON.stringify(data), {
       headers: { 'content-type': 'application/json' }
@@ -53,6 +49,7 @@ const updateTodo = async (data: Todo): Promise<Todo[]> => {
   } catch (e) {
     if (e instanceof AxiosError) {
       if (!e.response) throw new Error('Request Failed')
+      if (e.response.status === 403) throw new ResponseError({ message: 'Forbidden', code: 403 })
       throw new ResponseError(e.response.data as ErrorResponse)
     }
 
@@ -61,8 +58,6 @@ const updateTodo = async (data: Todo): Promise<Todo[]> => {
 }
 
 const addTodo = async (data: Todo): Promise<Todo[]> => {
-  axios.defaults.headers.common['Authorization'] = `Bearer ${localStorage.getItem('jwt')}`
-
   try {
     const response = await axios.post(`${API_URL}/add`, JSON.stringify(data), {
       headers: { 'content-type': 'application/json' }
@@ -72,7 +67,7 @@ const addTodo = async (data: Todo): Promise<Todo[]> => {
   } catch (e) {
     if (e instanceof AxiosError) {
       if (!e.response) throw new Error('Request Failed')
-      console.log(e.response.data)
+      if (e.response.status === 403) throw new ResponseError({ message: 'Forbidden', code: 403 })
       throw new ResponseError(e.response.data as ErrorResponse)
     }
 

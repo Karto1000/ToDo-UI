@@ -1,6 +1,8 @@
 <script setup lang="ts">
+import axios from 'axios'
 
 const logout = () => {
+  delete axios.defaults.headers.common['Authorization']
   localStorage.removeItem('jwt')
 }
 </script>
@@ -28,7 +30,7 @@ const logout = () => {
           <li class="nav-item">
             <a class="nav-link active" aria-current="page" href="">Home</a>
           </li>
-           <li class="nav-item">
+          <li class="nav-item">
             <a class="nav-link active" aria-current="page" @click="logout" href="/login">Logout</a>
           </li>
         </ul>

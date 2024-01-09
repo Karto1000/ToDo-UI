@@ -3,6 +3,7 @@ import { useToast } from 'vue-toast-notification'
 import router from '@/router'
 import { login } from '@/lib/auth'
 import { ResponseError } from '@/lib'
+import axios from 'axios'
 
 const $toast = useToast()
 
@@ -15,7 +16,7 @@ const onLogin = async (e: SubmitEvent) => {
   e.preventDefault()
 
   const data = new FormData(e.target as HTMLFormElement)
-  const loginRequest: LoginRequest = {}
+  const loginRequest: LoginRequest = {} as LoginRequest
 
   const entries: string[] = []
   data.forEach((value) => entries.push(value))
@@ -26,13 +27,14 @@ const onLogin = async (e: SubmitEvent) => {
     return
   }
 
-  loginRequest.email = data.get('email')
-  loginRequest.password = data.get('password')
+  loginRequest.email = <string>data.get('email')
+  loginRequest.password = <string>data.get('password')
 
   try {
     const loginResponse = await login(loginRequest)
 
     localStorage.setItem('jwt', loginResponse.token)
+    axios.defaults.headers.common['Authorization'] = `Bearer ${localStorage.getItem('jwt')}`
     await router.push('/')
   } catch (e) {
     if (e instanceof ResponseError) {

@@ -4,6 +4,7 @@ import TodoList from '../views/TodoList.vue'
 import Register from '@/views/Register.vue'
 import Login from '@/views/Login.vue'
 import { jwtDecode } from 'jwt-decode'
+import axios from 'axios'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -39,7 +40,7 @@ router.beforeEach((to, from, next) => {
   }
 
   // Route does not require Auth
-  if (!to.matched.some(record => record.meta.requiresAuth)) {
+  if (!to.matched.some((record) => record.meta.requiresAuth)) {
     next()
     return
   }
@@ -70,6 +71,10 @@ router.beforeEach((to, from, next) => {
       next({ name: '' })
       return
     }
+
+    // Set the axios header to make sure that the token is always sent even when refreshing the page
+    if (!axios.defaults.headers.common['Authorization'])
+      axios.defaults.headers.common['Authorization'] = `Bearer ${localStorage.getItem('jwt')}`
 
     next()
   } catch (e) {
