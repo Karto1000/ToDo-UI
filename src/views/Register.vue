@@ -9,7 +9,7 @@ const $toast = useToast()
 type RegisterRequest = {
   email: string
   password: string
-  confirmationPassword: string
+  repeatedPassword: string
   firstname: string
   lastname: string
 }
@@ -33,7 +33,7 @@ const onRegister = async (e: SubmitEvent) => {
   registerRequest.password = <string>data.get('password')
   registerRequest.firstname = <string>data.get('firstname')
   registerRequest.lastname = <string>data.get('lastname')
-  registerRequest.confirmationPassword = <string>data.get('confirm-password')
+  registerRequest.repeatedPassword = <string>data.get('repeated-password')
 
   try {
     await register(registerRequest)
@@ -64,12 +64,12 @@ const onRegister = async (e: SubmitEvent) => {
         <input type="password" name="password" class="form-control" id="input-password" required />
       </div>
       <div class="mb-4">
-        <label for="confirm-input-password" class="form-label">Confirm Password</label>
+        <label for="repeat-input-password" class="form-label">Confirm Password</label>
         <input
           type="password"
-          name="confirm-password"
+          name="repeated-password"
           class="form-control"
-          id="confirm-input-password"
+          id="repeated-input-password"
           required
         />
       </div>
