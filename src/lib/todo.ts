@@ -1,7 +1,7 @@
 import axios, { AxiosError } from 'axios'
+import type { ErrorResponse } from '@/lib/index'
 // @ts-ignore
 import { API_URL, ResponseError } from '@/lib/index'
-import type { ErrorResponse } from '@/lib/index'
 
 export type Todo = {
   taskId?: number

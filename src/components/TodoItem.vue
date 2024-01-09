@@ -1,5 +1,4 @@
 <script setup lang="ts">
-
 type Todo = {
   taskId: number
   title: string
@@ -8,13 +7,12 @@ type Todo = {
 }
 
 type Props = {
-  todo: Todo,
-  onChecked: Function,
+  todo: Todo
+  onChecked: Function
   onEdit: Function
 }
 
 const props = defineProps<Props>()
-
 </script>
 
 <template>
@@ -30,7 +28,9 @@ const props = defineProps<Props>()
     <div class="vertical-line" />
     <div>
       <h3>{{ props.todo.title }}</h3>
-      <p class="text-break" v-if="props.todo.description != null && props.todo.description != ''">{{ props.todo.description }}</p>
+      <p class="text-break" v-if="props.todo.description != null && props.todo.description != ''">
+        {{ props.todo.description }}
+      </p>
       <p class="text-break" v-else>No Description</p>
     </div>
   </div>

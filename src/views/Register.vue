@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { useToast } from 'vue-toast-notification'
 import router from '@/router'
-import { login, register } from '@/lib/auth'
+import { register } from '@/lib/auth'
 import { ResponseError } from '@/lib'
 
 const $toast = useToast()
