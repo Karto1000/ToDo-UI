@@ -1,14 +1,13 @@
 <script setup lang="ts">
-
 import { useToast } from 'vue-toast-notification'
 import router from '@/router'
 import { login } from '@/lib/auth'
-import axios from 'axios'
+import { ResponseError } from '@/lib'
 
 const $toast = useToast()
 
 type LoginRequest = {
-  email: string,
+  email: string
   password: string
 }
 
@@ -22,7 +21,7 @@ const onLogin = async (e: SubmitEvent) => {
   data.forEach((value) => entries.push(value))
 
   // Any Entry is not truthy
-  if (entries.some(e => !e)) {
+  if (entries.some((e) => !e)) {
     $toast.info('Invalid Form')
     return
   }
@@ -36,11 +35,16 @@ const onLogin = async (e: SubmitEvent) => {
     localStorage.setItem('jwt', loginResponse.token)
     await router.push('/')
   } catch (e) {
-    console.log(e.message)
-    $toast.error((<Error>e).message)
+    if (e instanceof ResponseError) {
+      $toast.error(e.errorResponse.message)
+      return
+    }
+
+    if (e instanceof Error) {
+      $toast.error(e.message)
+    }
   }
 }
-
 </script>
 
 <template>
@@ -48,18 +52,18 @@ const onLogin = async (e: SubmitEvent) => {
     <div class="mb-4">
       <h1>Login</h1>
       <span>
-      Don't Have an Account?
+        Don't Have an Account?
         <a href="/register">Create one Here</a>
-    </span>
+      </span>
     </div>
     <form id="register-form" @submit="onLogin">
       <div class="mb-4">
         <label for="input-email" class="form-label">Email</label>
-        <input type="email" name="email" class="form-control" id="input-email">
+        <input type="email" name="email" class="form-control" id="input-email" required />
       </div>
       <div class="mb-4">
         <label for="input-password" class="form-label">Password</label>
-        <input type="password" name="password" class="form-control" id="input-password">
+        <input type="password" name="password" class="form-control" id="input-password" required />
       </div>
       <button type="submit" form="register-form" class="btn btn-primary">Login</button>
     </form>
@@ -68,7 +72,7 @@ const onLogin = async (e: SubmitEvent) => {
 
 <style scoped>
 .login-card {
-  box-shadow: 2px 2px 10px 0 #DDDDDD;
+  box-shadow: 2px 2px 10px 0 #dddddd;
   padding: 16px;
   width: 50%;
   position: absolute;

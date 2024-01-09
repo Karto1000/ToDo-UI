@@ -5,6 +5,7 @@ import { Modal } from 'bootstrap'
 import Navigation from '@/components/Navigation.vue'
 import { addTodo, checkTodoById, getPendingTodos, type Todo, updateTodo } from '@/lib/todo'
 import { useToast } from 'vue-toast-notification'
+import { ResponseError } from '@/lib'
 
 const todos = ref<Array<Todo>>([])
 const editingTodo = ref<Todo | null>(null)
@@ -16,8 +17,14 @@ onMounted(async () => {
   try {
     todos.value = await getPendingTodos()
   } catch (e) {
-    $toast.info('Failed to load Todos')
-    return
+    if (e instanceof ResponseError) {
+      $toast.error(e.errorResponse.message)
+      return
+    }
+
+    if (e instanceof Error) {
+      $toast.error(e.message)
+    }
   }
 })
 
@@ -27,7 +34,14 @@ const onChecked = async (todo: Todo) => {
   try {
     todos.value = await checkTodoById(todo.taskId.toString())
   } catch (e) {
-    $toast.error((<Error>e).message)
+    if (e instanceof ResponseError) {
+      $toast.error(e.errorResponse.message)
+      return
+    }
+
+    if (e instanceof Error) {
+      $toast.error(e.message)
+    }
   }
 }
 
@@ -60,11 +74,6 @@ const onModalSave = async (e: Event) => {
   const entries: string[] = []
   data.forEach((v) => entries.push(v.toString()))
 
-  // Any Entry is not truthy
-  if (entries.some(e => !e)) {
-    $toast.info('Invalid Todo')
-    return
-  }
   const todo: Todo = {
     title: <string>data.get('title'),
     description: <string>data.get('description'),
@@ -79,8 +88,14 @@ const onModalSave = async (e: Event) => {
   try {
     todos.value = await updateTodo(todo)
   } catch (e) {
-    $toast.error((<Error>e).message)
-    return
+    if (e instanceof ResponseError) {
+      $toast.error(e.errorResponse.message)
+      return
+    }
+
+    if (e instanceof Error) {
+      $toast.error(e.message)
+    }
   }
 
   modalObject.value.hide()
@@ -95,12 +110,6 @@ const onSubmit = async (e: Event) => {
   const entries: string[] = []
   data.forEach((v) => entries.push(<string>v))
 
-  // Any Entry is not truthy
-  if (entries.some(e => !e)) {
-    $toast.info('Invalid Todo')
-    return
-  }
-
   const todo = {
     title: <string>data.get('title'),
     description: <string>data.get('description'),
@@ -110,18 +119,30 @@ const onSubmit = async (e: Event) => {
   try {
     todos.value = await addTodo(todo)
   } catch (e) {
-    $toast.error((<Error>e).message)
-    return
+    if (e instanceof ResponseError) {
+      $toast.error(e.errorResponse.message)
+      return
+    }
+
+    if (e instanceof Error) {
+      $toast.error(e.message)
+    }
   }
 }
-
 </script>
 
 <template>
   <Navigation />
   <div class="page">
-    <div class="modal fade" id="edit-modal" tabindex="-1" role="dialog" aria-labelledby="edit-modal-label"
-         aria-hidden="true" ref="modalRef">
+    <div
+      class="modal fade"
+      id="edit-modal"
+      tabindex="-1"
+      role="dialog"
+      aria-labelledby="edit-modal-label"
+      aria-hidden="true"
+      ref="modalRef"
+    >
       <div class="modal-dialog" role="document">
         <div class="modal-content">
           <div class="modal-header">
@@ -131,13 +152,26 @@ const onSubmit = async (e: Event) => {
             <form id="editing-form" @submit="onModalSave">
               <div class="mb-3">
                 <label for="input-title" class="form-label">Title</label>
-                <input type="text" name="title" class="form-control" id="input-title" aria-describedby="emailHelp"
-                       :value="editingTodo?.title" />
+                <input
+                  type="text"
+                  name="title"
+                  class="form-control"
+                  id="input-title"
+                  aria-describedby="emailHelp"
+                  required
+                  :value="editingTodo?.title"
+                />
               </div>
               <div class="mb-3">
                 <label for="input-description" class="form-label">Description</label>
-                <textarea class="form-control" name="description" id="input-description" rows="3"
-                          :value="editingTodo?.description"></textarea>
+                <textarea
+                  class="form-control"
+                  name="description"
+                  id="input-description"
+                  rows="3"
+                  required
+                  :value="editingTodo?.description"
+                ></textarea>
               </div>
             </form>
           </div>
@@ -154,11 +188,24 @@ const onSubmit = async (e: Event) => {
     <form @submit="onSubmit">
       <div class="mb-3">
         <label for="input-title" class="form-label">Title</label>
-        <input type="text" name="title" class="form-control" id="input-title" aria-describedby="emailHelp" />
+        <input
+          type="text"
+          name="title"
+          class="form-control"
+          id="input-title"
+          aria-describedby="emailHelp"
+          required
+        />
       </div>
       <div class="mb-3">
         <label for="input-description" class="form-label">Description</label>
-        <textarea class="form-control" name="description" id="input-description" rows="3"></textarea>
+        <textarea
+          class="form-control"
+          name="description"
+          id="input-description"
+          rows="3"
+          required
+        ></textarea>
       </div>
       <button type="submit" class="btn btn-primary">Submit</button>
     </form>
